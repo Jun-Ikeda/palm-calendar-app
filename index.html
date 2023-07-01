@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Palm Calendar</title>
+</head>
+<body>
+    <div id="app">
+        <p>PaLM Calendar</p>
+        <input type="text" id="prompt">
+        <button id="generateEvent">Generate Event</button>
+        <button id="clear">Clear</button>
+    </div>
+    <script>
+        let inputPrompt = document.getElementById('prompt');
+        let buttonGenerateEvent = document.getElementById('generateEvent');
+        let buttonClear = document.getElementById('clear');
+
+        buttonGenerateEvent.addEventListener('click', generateEvent);
+        buttonClear.addEventListener('click', clear);
+
+        function generateEvent() {
+            google.script.run.withSuccessHandler(url => window.open(url)).generateEvent(inputPrompt.value);
+        }
+        function clear() {
+            inputPrompt.value = "";
+        }
+    </script>
+</body>
+</html>
