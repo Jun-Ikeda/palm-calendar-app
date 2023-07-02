@@ -1,29 +1,107 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Palm Calendar</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/material-design-lite/1.3.0/material.min.css">
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    #app {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background-color: #fafafa;
+    }
+    #title {
+      font-size: 24px;
+      font-weight: 500;
+      margin-bottom: 16px;
+      color: #212121;
+    }
+    #prompt {
+      font-family: 'Roboto', sans-serif;
+      padding: 16px; /* Increased padding to create more vertical space */
+      font-size: 16px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      margin-bottom: 16px;
+      transition: border-color 0.2s ease-in-out;
+      width: 600px; /* Adjusted width to accommodate larger input */
+      height: 200px; /* Added height to increase vertical size */
+      resize: none; /* Prevents resizing of the input field */
+    }
+    #prompt:focus {
+      outline: none;
+      border-color: #3f51b5;
+    }
+    .button-container {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+    }
+    #generateEvent,
+    #clear {
+      padding: 8px 16px;
+      font-size: 16px;
+      border-radius: 4px;
+      background-color: #3f51b5;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.2s ease-in-out;
+    }
+    #generateEvent:hover,
+    #clear:hover {
+      background-color: #303f9f;
+    }
+    .loader {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #3f51b5;
+      border-radius: 50%;
+      width: 16px;
+      height: 16px;
+      animation: spin 1s linear infinite;
+      display: inline-block;
+      margin-right: 8px;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
 </head>
 <body>
-    <div id="app">
-        <p>PaLM Calendar</p>
-        <input type="text" id="prompt">
-        <button id="generateEvent">Generate Event</button>
-        <button id="clear">Clear</button>
+  <div id="app">
+    <p id="title">PaLM Calendar</p>
+    <textarea id="prompt"></textarea> <!-- Changed input type to textarea for multiline input -->
+    <div class="button-container">
+      <button id="generateEvent">Generate Event</button>
+      <button id="clear">Clear</button>
     </div>
-    <script>
-        let inputPrompt = document.getElementById('prompt');
-        let buttonGenerateEvent = document.getElementById('generateEvent');
-        let buttonClear = document.getElementById('clear');
+  </div>
+  <script>
+    let inputPrompt = document.getElementById('prompt');
+    let buttonGenerateEvent = document.getElementById('generateEvent');
+    let buttonClear = document.getElementById('clear');
 
-        buttonGenerateEvent.addEventListener('click', generateEvent);
-        buttonClear.addEventListener('click', clear);
+    buttonGenerateEvent.addEventListener('click', generateEvent);
+    buttonClear.addEventListener('click', clear);
 
-        function generateEvent() {
-            google.script.run.withSuccessHandler(url => window.open(url)).generateEvent(inputPrompt.value);
-        }
-        function clear() {
-            inputPrompt.value = "";
-        }
-    </script>
+    function generateEvent() {
+      buttonGenerateEvent.innerHTML = '<span class="loader"></span>Generating...';
+      google.script.run.withSuccessHandler(url => {
+        buttonGenerateEvent.innerHTML = 'Generate Event';
+        window.open(url)
+      }).generateEvent(inputPrompt.value);
+    }
+    function clear() {
+      inputPrompt.value = "";
+    }
+  </script>
 </body>
 </html>

@@ -19,12 +19,12 @@ function getResponse(prompt) {
   const response = UrlFetchApp.fetch(requestUrl, requestOptions);
   return response.getContentText();
 }
-
+  
 function generateEvent(prompt) {
   let url = "https://www.google.com/calendar/render?action=TEMPLATE&";
   const promptTemplate = (item, isRequired = true) => 
     `Read the paragraph below about an event to add to my calendar and give an appropriate ${item}.`
-    + (isRequired ? '' : ' If not applicable, answer false.');
+    + (isRequired ? '' : ' If not applicable, answer false.') + '\\n\\n';
 
   const text = getResponse(promptTemplate('title. Do not include location and date/time. ') + prompt);
   const details = getResponse(promptTemplate('description', false) + prompt);
@@ -34,13 +34,17 @@ function generateEvent(prompt) {
   const endDate = getResponse(promptTemplate('end date in YYYYMMDD.  Do not include space or hyphen.') + prompt);
   const endTime = getResponse(promptTemplate('end time in HHmmSS. Do not include space or hyphen.') + prompt);
 
+  const detailsPlusPrompt = (details, prompt) => {
+    return `${details}%0A%0A%0A${'-'.repeat(50)}%0A%0A${prompt}`
+  }
+
   url += `text=${text}&`
   if (details != 'false') {
-    url += `details=${details}&`
+    url += `details=${detailsPlusPrompt(details, prompt)}&`
   }
   if (location != 'false') {
     url += `location=${location}&`
   }
-  url += `dates=${startDate}T${startTime}Z/${endDate}T${endTime}Z&`
+  url += `dates=${startDate}T${startTime}Z/${endDate}T${endTime}Z`
   return url;
 }
